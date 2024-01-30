@@ -1,5 +1,6 @@
 import { stdin, stdout } from "node:process";
-import { CLI_USERNAME, EXIT_ERROR_CODE, EXIT_NORMAL_CODE, ONE, THIRD_ELEMENT } from "./constants.js";
+import { exit, getCommand, getParams } from "./command.js";
+import { CLI_USERNAME, COMMAND_EXIT, EXIT_ERROR_CODE, EXIT_NORMAL_CODE, ONE, THIRD_ELEMENT } from "./constants.js";
 import { global } from "./global.js";
 
 const args = process.argv.slice(THIRD_ELEMENT);
@@ -26,5 +27,17 @@ process.on("SIGINT", () => {
 });
 
 stdin.on("data", async (data) => {
+    const line = data.toString().trim();
+    const command = getCommand(line);
+    const params = getParams(line);
+
+    switch (command) {
+        case COMMAND_EXIT:
+            exit();
+            break;
+        default:
+            if (command !== "") stdout.write("\x1b[31mInvalid input\x1b[0m\n");
+    }
+
     stdout.write(`\nYou are currently in \x1b[33m${global.path}\x1b[0m\n`);
 });
