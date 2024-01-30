@@ -1,0 +1,23 @@
+{
+  "name": "file-manager",
+  "version": "1.0.0",
+  "description": "File Manager based on NodeJS",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gsidnick/file-manager.git"
+  },
+  "keywords": [
+    "nodejs",
+    "filemanager"
+  ],
+  "author": "Nikolay Sidorenko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gsidnick/file-manager/issues"
+  },
+  "homepage": "https://github.com/gsidnick/file-manager#readme"
+}
