@@ -1,6 +1,7 @@
 export const CLI_USERNAME = "--user-name";
 export const COMMAND_EXIT = ".exit";
 export const COMMAND_UP = "up";
+export const COMMAND_CD = "cd";
 export const FIRST_ELEMENT = 0;
 export const THIRD_ELEMENT = 2;
 export const ONE = 1;
