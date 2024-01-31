@@ -58,6 +58,33 @@ export const cd = async (data) => {
     }
 };
 
+export const ls = async (data) => {
+    const params = data.split(" ");
+
+    if (params[FIRST_ELEMENT] !== "") {
+        stdout.write("\x1b[31mInvalid input\x1b[0m\n");
+        return;
+    }
+
+    const folderContent = await fs.readdir(global.path, { withFileTypes: true });
+    const folders = [];
+    const files = [];
+
+    folderContent.forEach((item) => {
+        if (item.isDirectory()) {
+            folders.push({ name: item.name, type: "directory" });
+        }
+
+        if (item.isFile()) {
+            files.push({ name: item.name, type: "file" });
+        }
+    });
+
+    const sortedFolders = folders.sort((a, b) => a.name.localeCompare(b.name));
+    const sortedFiles = files.sort((a, b) => a.name.localeCompare(b.name));
+    console.table([...sortedFolders, ...sortedFiles]);
+};
+
 export const exit = () => {
     process.exit(0);
 };

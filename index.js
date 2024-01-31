@@ -1,9 +1,10 @@
 import { stdin, stdout } from "node:process";
-import { cd, exit, getCommand, getParams, up } from "./command.js";
+import { cd, exit, getCommand, getParams, ls, up } from "./command.js";
 import {
     CLI_USERNAME,
     COMMAND_CD,
     COMMAND_EXIT,
+    COMMAND_LS,
     COMMAND_UP,
     EXIT_ERROR_CODE,
     EXIT_NORMAL_CODE,
@@ -46,6 +47,9 @@ stdin.on("data", async (data) => {
             break;
         case COMMAND_CD:
             await cd(params);
+            break;
+        case COMMAND_LS:
+            await ls(params);
             break;
         case COMMAND_EXIT:
             exit();
