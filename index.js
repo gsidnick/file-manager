@@ -1,6 +1,14 @@
 import { stdin, stdout } from "node:process";
-import { exit, getCommand, getParams } from "./command.js";
-import { CLI_USERNAME, COMMAND_EXIT, EXIT_ERROR_CODE, EXIT_NORMAL_CODE, ONE, THIRD_ELEMENT } from "./constants.js";
+import { exit, getCommand, getParams, up } from "./command.js";
+import {
+    CLI_USERNAME,
+    COMMAND_EXIT,
+    COMMAND_UP,
+    EXIT_ERROR_CODE,
+    EXIT_NORMAL_CODE,
+    ONE,
+    THIRD_ELEMENT,
+} from "./constants.js";
 import { global } from "./global.js";
 
 const args = process.argv.slice(THIRD_ELEMENT);
@@ -32,6 +40,9 @@ stdin.on("data", async (data) => {
     const params = getParams(line);
 
     switch (command) {
+        case COMMAND_UP:
+            await up(params);
+            break;
         case COMMAND_EXIT:
             exit();
             break;
