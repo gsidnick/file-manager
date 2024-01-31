@@ -3,6 +3,7 @@ import path from "node:path";
 import { stdout } from "node:process";
 import { FIRST_ELEMENT } from "./constants.js";
 import { global } from "./global.js";
+import { pathQuoteNormalize, pathValidation } from "./path.js";
 import { isExist } from "./utils.js";
 
 export const up = async (data) => {
@@ -24,72 +25,37 @@ export const up = async (data) => {
 };
 
 export const cd = async (data) => {
-    let fullPath = "";
-    let pathname = path.normalize(data);
+    try {
+        let pathname = path.normalize(data);
 
-    const quotes = pathname.match(/"|'/g);
+        pathValidation(pathname);
 
-    if (quotes && quotes.length > 0) {
-        const singleQuotes = quotes.filter((q) => q === "'");
-        const doubleQuotes = quotes.filter((q) => q === '"');
+        if (/"|'/g.test(pathname)) {
+            pathname = pathQuoteNormalize(pathname);
+        }
 
-        if (singleQuotes.length % 2 !== 0 || doubleQuotes.length % 2 !== 0) {
-            stdout.write("\x1b[31mInvalid input\x1b[0m\n");
+        if (!path.isAbsolute(pathname)) {
+            pathname = path.join(global.path, pathname);
+        }
+
+        const isPathnameExist = await isExist(pathname);
+
+        if (!isPathnameExist) {
+            stdout.write("\x1b[31mOperation failed\x1b[0m\n");
             return;
         }
 
-        const splittedPathname = pathname.split("");
-        let openedQuote = "";
+        const isDirectory = (await fs.stat(pathname)).isDirectory();
 
-        for (let i = 0; i < splittedPathname.length; i += 1) {
-            if (!openedQuote) {
-                if (/"|'/.test(splittedPathname[i])) {
-                    openedQuote = splittedPathname[i];
-                    splittedPathname[i] = "{quote}";
-                } else if (/\s+/.test(splittedPathname[i])) {
-                    stdout.write(`\x1b[31mInvalid input\x1b[0m\n`);
-                    return;
-                }
-            } else {
-                if (openedQuote === splittedPathname[i]) {
-                    openedQuote = "";
-                    splittedPathname[i] = "{quote}";
-                }
-            }
-        }
-
-        pathname = splittedPathname.join("").replace(/\{quote\}/g, "");
-    } else {
-        const params = data.split(" ");
-        const dir = params[FIRST_ELEMENT];
-
-        if (dir === "" || params.length > 1) {
-            stdout.write("\x1b[31mInvalid input\x1b[0m\n");
+        if (!isDirectory) {
+            stdout.write("\x1b[31mOperation failed\x1b[0m\n");
             return;
         }
+
+        global.path = await fs.realpath(pathname);
+    } catch (error) {
+        stdout.write(error.message);
     }
-
-    if (path.isAbsolute(pathname)) {
-        fullPath = path.normalize(pathname);
-    } else {
-        fullPath = path.join(global.path, pathname);
-    }
-
-    const isFullPathExist = await isExist(fullPath);
-
-    if (!isFullPathExist) {
-        stdout.write("\x1b[31mOperation failed\x1b[0m\n");
-        return;
-    }
-
-    const isDirectory = (await fs.stat(fullPath)).isDirectory();
-
-    if (!isDirectory) {
-        stdout.write("\x1b[31mOperation failed\x1b[0m\n");
-        return;
-    }
-
-    global.path = await fs.realpath(fullPath);
 };
 
 export const exit = () => {
