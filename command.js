@@ -156,7 +156,6 @@ export const add = async (data) => {
         }
 
         const fd = await fs.open(filename, "w");
-        // await fd.writeFile("");
         await fd.close();
     } catch (error) {
         stdout.write(error.message);
