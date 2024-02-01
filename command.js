@@ -4,8 +4,7 @@ import path from "node:path";
 import { stdout } from "node:process";
 import { FIRST_ELEMENT } from "./constants.js";
 import { global } from "./global.js";
-import { pathQuoteNormalize, pathValidation } from "./path.js";
-import { isExist } from "./utils.js";
+import { isExist, pathQuoteNormalize, pathValidation } from "./utils.js";
 
 export const up = async (data) => {
     const params = data.split(" ");
