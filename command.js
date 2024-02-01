@@ -27,6 +27,11 @@ export const up = async (data) => {
 
 export const cd = async (data) => {
     try {
+        if (data === "") {
+            stdout.write("\x1b[31mInvalid input\x1b[0m\n");
+            return;
+        }
+
         let pathname = path.normalize(data);
 
         pathValidation(pathname);
@@ -88,6 +93,11 @@ export const ls = async (data) => {
 
 export const cat = async (data) => {
     try {
+        if (data === "") {
+            stdout.write("\x1b[31mInvalid input\x1b[0m\n");
+            return;
+        }
+
         let pathname = path.normalize(data);
 
         pathValidation(pathname);
