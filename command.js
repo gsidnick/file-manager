@@ -2,34 +2,36 @@ import { createReadStream } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { stdout } from "node:process";
-import { FIRST_ELEMENT } from "./constants.js";
+import { FIRST_ELEMENT, MESSAGE_INVALID_INPUT, MESSAGE_OPERATION_FAILED } from "./constants.js";
 import { global } from "./global.js";
 import message from "./message.js";
 import { filenameValidation, isExist, pathQuoteNormalize, pathValidation } from "./utils.js";
 
 export const up = async (data) => {
-    const params = data.split(" ");
+    try {
+        const params = data.split(" ");
 
-    if (params[FIRST_ELEMENT] !== "") {
-        message.invalidInput();
-        return;
+        if (params[FIRST_ELEMENT] !== "") {
+            throw new Error(MESSAGE_INVALID_INPUT);
+        }
+
+        const splittedPath = global.path.split(path.sep).slice(0, -1);
+
+        if (splittedPath.length > 1) {
+            global.path = await fs.realpath(`${splittedPath.join(path.sep)}`);
+            return;
+        }
+
+        global.path = await fs.realpath(`${splittedPath.join()}${path.sep}`);
+    } catch (error) {
+        stdout.write(error.message);
     }
-
-    const splittedPath = global.path.split(path.sep).slice(0, -1);
-
-    if (splittedPath.length > 1) {
-        global.path = await fs.realpath(`${splittedPath.join(path.sep)}`);
-        return;
-    }
-
-    global.path = await fs.realpath(`${splittedPath.join()}${path.sep}`);
 };
 
 export const cd = async (data) => {
     try {
         if (data === "") {
-            message.invalidInput();
-            return;
+            throw new Error(MESSAGE_INVALID_INPUT);
         }
 
         let pathname = path.normalize(data);
@@ -47,15 +49,13 @@ export const cd = async (data) => {
         const isPathnameExist = await isExist(pathname);
 
         if (!isPathnameExist) {
-            message.operationFailed();
-            return;
+            throw new Error(MESSAGE_OPERATION_FAILED);
         }
 
         const isDirectory = (await fs.stat(pathname)).isDirectory();
 
         if (!isDirectory) {
-            message.operationFailed();
-            return;
+            throw new Error(MESSAGE_OPERATION_FAILED);
         }
 
         global.path = await fs.realpath(pathname);
@@ -65,37 +65,39 @@ export const cd = async (data) => {
 };
 
 export const ls = async (data) => {
-    const params = data.split(" ");
+    try {
+        const params = data.split(" ");
 
-    if (params[FIRST_ELEMENT] !== "") {
-        message.invalidInput();
-        return;
+        if (params[FIRST_ELEMENT] !== "") {
+            throw new Error(MESSAGE_INVALID_INPUT);
+        }
+
+        const folderContent = await fs.readdir(global.path, { withFileTypes: true });
+        const folders = [];
+        const files = [];
+
+        folderContent.forEach((item) => {
+            if (item.isDirectory()) {
+                folders.push({ name: item.name, type: "directory" });
+            }
+
+            if (item.isFile()) {
+                files.push({ name: item.name, type: "file" });
+            }
+        });
+
+        const sortedFolders = folders.sort((a, b) => a.name.localeCompare(b.name));
+        const sortedFiles = files.sort((a, b) => a.name.localeCompare(b.name));
+        console.table([...sortedFolders, ...sortedFiles]);
+    } catch (error) {
+        stdout.write(error.message);
     }
-
-    const folderContent = await fs.readdir(global.path, { withFileTypes: true });
-    const folders = [];
-    const files = [];
-
-    folderContent.forEach((item) => {
-        if (item.isDirectory()) {
-            folders.push({ name: item.name, type: "directory" });
-        }
-
-        if (item.isFile()) {
-            files.push({ name: item.name, type: "file" });
-        }
-    });
-
-    const sortedFolders = folders.sort((a, b) => a.name.localeCompare(b.name));
-    const sortedFiles = files.sort((a, b) => a.name.localeCompare(b.name));
-    console.table([...sortedFolders, ...sortedFiles]);
 };
 
 export const cat = async (data) => {
     try {
         if (data === "") {
-            message.invalidInput();
-            return;
+            throw new Error(MESSAGE_INVALID_INPUT);
         }
 
         let pathname = path.normalize(data);
@@ -113,15 +115,13 @@ export const cat = async (data) => {
         const isPathnameExist = await isExist(pathname);
 
         if (!isPathnameExist) {
-            message.operationFailed();
-            return;
+            throw new Error(MESSAGE_OPERATION_FAILED);
         }
 
         const isFile = (await fs.stat(pathname)).isFile();
 
         if (!isFile) {
-            message.operationFailed();
-            return;
+            throw new Error(MESSAGE_OPERATION_FAILED);
         }
 
         const input = createReadStream(pathname, { encoding: "utf-8" });
@@ -141,8 +141,7 @@ export const cat = async (data) => {
 export const add = async (data) => {
     try {
         if (data === "") {
-            message.invalidInput();
-            return;
+            throw new Error(MESSAGE_INVALID_INPUT);
         }
 
         filenameValidation(data);
@@ -151,8 +150,7 @@ export const add = async (data) => {
         const isFilenameExist = await isExist(filename);
 
         if (isFilenameExist) {
-            message.operationFailed();
-            return;
+            throw new Error(MESSAGE_OPERATION_FAILED);
         }
 
         const fd = await fs.open(filename, "w");

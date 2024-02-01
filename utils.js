@@ -58,8 +58,7 @@ export const pathQuoteNormalize = (pathname) => {
                 openedQuote = splittedPathname[i];
                 splittedPathname[i] = "{quote}";
             } else if (/\s+/.test(splittedPathname[i])) {
-                stdout.write(MESSAGE_INVALID_INPUT);
-                return;
+                throw new Error(MESSAGE_INVALID_INPUT);
             }
         } else {
             if (openedQuote === splittedPathname[i]) {
