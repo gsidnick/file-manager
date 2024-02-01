@@ -1,7 +1,8 @@
 import { stdin, stdout } from "node:process";
-import { cd, exit, getCommand, getParams, ls, up } from "./command.js";
+import { cat, cd, exit, getCommand, getParams, ls, up } from "./command.js";
 import {
     CLI_USERNAME,
+    COMMAND_CAT,
     COMMAND_CD,
     COMMAND_EXIT,
     COMMAND_LS,
@@ -44,19 +45,24 @@ stdin.on("data", async (data) => {
     switch (command) {
         case COMMAND_UP:
             await up(params);
+            stdout.write(`\nYou are currently in \x1b[33m${global.path}\x1b[0m\n`);
             break;
         case COMMAND_CD:
             await cd(params);
+            stdout.write(`\nYou are currently in \x1b[33m${global.path}\x1b[0m\n`);
             break;
         case COMMAND_LS:
             await ls(params);
+            stdout.write(`\nYou are currently in \x1b[33m${global.path}\x1b[0m\n`);
+            break;
+        case COMMAND_CAT:
+            await cat(params);
             break;
         case COMMAND_EXIT:
             exit();
             break;
         default:
             if (command !== "") stdout.write("\x1b[31mInvalid input\x1b[0m\n");
+            stdout.write(`\nYou are currently in \x1b[33m${global.path}\x1b[0m\n`);
     }
-
-    stdout.write(`\nYou are currently in \x1b[33m${global.path}\x1b[0m\n`);
 });

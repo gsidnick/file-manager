@@ -1,3 +1,4 @@
+import { createReadStream } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { stdout } from "node:process";
@@ -83,6 +84,48 @@ export const ls = async (data) => {
     const sortedFolders = folders.sort((a, b) => a.name.localeCompare(b.name));
     const sortedFiles = files.sort((a, b) => a.name.localeCompare(b.name));
     console.table([...sortedFolders, ...sortedFiles]);
+};
+
+export const cat = async (data) => {
+    try {
+        let pathname = path.normalize(data);
+
+        pathValidation(pathname);
+
+        if (/"|'/g.test(pathname)) {
+            pathname = pathQuoteNormalize(pathname);
+        }
+
+        if (!path.isAbsolute(pathname)) {
+            pathname = path.join(global.path, pathname);
+        }
+
+        const isPathnameExist = await isExist(pathname);
+
+        if (!isPathnameExist) {
+            stdout.write("\x1b[31mOperation failed\x1b[0m\n");
+            return;
+        }
+
+        const isFile = (await fs.stat(pathname)).isFile();
+
+        if (!isFile) {
+            stdout.write("\x1b[31mOperation failed\x1b[0m\n");
+            return;
+        }
+
+        const input = createReadStream(pathname, { encoding: "utf-8" });
+        let content = "";
+
+        input.on("data", (chunk) => (content += chunk));
+        input.on("end", () => {
+            stdout.write(content);
+            stdout.write(`\nYou are currently in \x1b[33m${global.path}\x1b[0m\n`);
+        });
+        input.on("error", (error) => stdout.write(error.message));
+    } catch (error) {
+        stdout.write(error.message);
+    }
 };
 
 export const exit = () => {
