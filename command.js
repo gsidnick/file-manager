@@ -4,7 +4,7 @@ import path from "node:path";
 import { stdout } from "node:process";
 import { FIRST_ELEMENT } from "./constants.js";
 import { global } from "./global.js";
-import { isExist, pathQuoteNormalize, pathValidation } from "./utils.js";
+import { filenameValidation, isExist, pathQuoteNormalize, pathValidation } from "./utils.js";
 
 export const up = async (data) => {
     const params = data.split(" ");
@@ -132,6 +132,31 @@ export const cat = async (data) => {
             stdout.write(`\nYou are currently in \x1b[33m${global.path}\x1b[0m\n`);
         });
         input.on("error", (error) => stdout.write(error.message));
+    } catch (error) {
+        stdout.write(error.message);
+    }
+};
+
+export const add = async (data) => {
+    try {
+        if (data === "") {
+            stdout.write("\x1b[31mInvalid input\x1b[0m\n");
+            return;
+        }
+
+        filenameValidation(data);
+
+        const filename = path.join(global.path, data);
+        const isFilenameExist = await isExist(filename);
+
+        if (isFilenameExist) {
+            stdout.write("\x1b[31mOperation failed\x1b[0m\n");
+            return;
+        }
+
+        const fd = await fs.open(filename, "w");
+        // await fd.writeFile("");
+        await fd.close();
     } catch (error) {
         stdout.write(error.message);
     }

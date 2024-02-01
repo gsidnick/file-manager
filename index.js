@@ -1,7 +1,8 @@
 import { stdin, stdout } from "node:process";
-import { cat, cd, exit, getCommand, getParams, ls, up } from "./command.js";
+import { add, cat, cd, exit, getCommand, getParams, ls, up } from "./command.js";
 import {
     CLI_USERNAME,
+    COMMAND_ADD,
     COMMAND_CAT,
     COMMAND_CD,
     COMMAND_EXIT,
@@ -57,6 +58,10 @@ stdin.on("data", async (data) => {
             break;
         case COMMAND_CAT:
             await cat(params);
+            break;
+        case COMMAND_ADD:
+            await add(params);
+            stdout.write(`\nYou are currently in \x1b[33m${global.path}\x1b[0m\n`);
             break;
         case COMMAND_EXIT:
             exit();

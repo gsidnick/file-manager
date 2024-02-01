@@ -71,3 +71,9 @@ export const pathQuoteNormalize = (pathname) => {
 
     return splittedPathname.join("").replace(/\{quote\}/g, "");
 };
+
+export const filenameValidation = (filename) => {
+    if (/[\\\/:*?"<>|]+/g.test(filename)) {
+        throw new Error("\x1b[31mOperation failed\x1b[0m\n");
+    }
+};
