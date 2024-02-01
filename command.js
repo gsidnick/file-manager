@@ -4,13 +4,14 @@ import path from "node:path";
 import { stdout } from "node:process";
 import { FIRST_ELEMENT } from "./constants.js";
 import { global } from "./global.js";
+import message from "./message.js";
 import { filenameValidation, isExist, pathQuoteNormalize, pathValidation } from "./utils.js";
 
 export const up = async (data) => {
     const params = data.split(" ");
 
     if (params[FIRST_ELEMENT] !== "") {
-        stdout.write("\x1b[31mInvalid input\x1b[0m\n");
+        message.invalidInput();
         return;
     }
 
@@ -27,7 +28,7 @@ export const up = async (data) => {
 export const cd = async (data) => {
     try {
         if (data === "") {
-            stdout.write("\x1b[31mInvalid input\x1b[0m\n");
+            message.invalidInput();
             return;
         }
 
@@ -46,14 +47,14 @@ export const cd = async (data) => {
         const isPathnameExist = await isExist(pathname);
 
         if (!isPathnameExist) {
-            stdout.write("\x1b[31mOperation failed\x1b[0m\n");
+            message.operationFailed();
             return;
         }
 
         const isDirectory = (await fs.stat(pathname)).isDirectory();
 
         if (!isDirectory) {
-            stdout.write("\x1b[31mOperation failed\x1b[0m\n");
+            message.operationFailed();
             return;
         }
 
@@ -67,7 +68,7 @@ export const ls = async (data) => {
     const params = data.split(" ");
 
     if (params[FIRST_ELEMENT] !== "") {
-        stdout.write("\x1b[31mInvalid input\x1b[0m\n");
+        message.invalidInput();
         return;
     }
 
@@ -93,7 +94,7 @@ export const ls = async (data) => {
 export const cat = async (data) => {
     try {
         if (data === "") {
-            stdout.write("\x1b[31mInvalid input\x1b[0m\n");
+            message.invalidInput();
             return;
         }
 
@@ -112,14 +113,14 @@ export const cat = async (data) => {
         const isPathnameExist = await isExist(pathname);
 
         if (!isPathnameExist) {
-            stdout.write("\x1b[31mOperation failed\x1b[0m\n");
+            message.operationFailed();
             return;
         }
 
         const isFile = (await fs.stat(pathname)).isFile();
 
         if (!isFile) {
-            stdout.write("\x1b[31mOperation failed\x1b[0m\n");
+            message.operationFailed();
             return;
         }
 
@@ -129,7 +130,7 @@ export const cat = async (data) => {
         input.on("data", (chunk) => (content += chunk));
         input.on("end", () => {
             stdout.write(content);
-            stdout.write(`\nYou are currently in \x1b[33m${global.path}\x1b[0m\n`);
+            message.currentPath();
         });
         input.on("error", (error) => stdout.write(error.message));
     } catch (error) {
@@ -140,7 +141,7 @@ export const cat = async (data) => {
 export const add = async (data) => {
     try {
         if (data === "") {
-            stdout.write("\x1b[31mInvalid input\x1b[0m\n");
+            message.invalidInput();
             return;
         }
 
@@ -150,7 +151,7 @@ export const add = async (data) => {
         const isFilenameExist = await isExist(filename);
 
         if (isFilenameExist) {
-            stdout.write("\x1b[31mOperation failed\x1b[0m\n");
+            message.operationFailed();
             return;
         }
 
