@@ -1,5 +1,5 @@
 import { access, constants } from "node:fs/promises";
-import { FIRST_ELEMENT } from "./constants.js";
+import { FIRST_ELEMENT, MESSAGE_INVALID_INPUT } from "./constants.js";
 
 export const isExist = async (pathname) => {
     try {
@@ -19,7 +19,7 @@ export const pathValidation = (pathname) => {
         const doubleQuotes = quotes.filter((q) => q === '"');
 
         if (singleQuotes.length % 2 !== 0 || doubleQuotes.length % 2 !== 0) {
-            throw new Error("\x1b[31mInvalid input\x1b[0m\n");
+            throw new Error(MESSAGE_INVALID_INPUT);
         }
 
         const splittedPathname = pathname.split("");
@@ -30,7 +30,7 @@ export const pathValidation = (pathname) => {
                 if (/"|'/.test(splittedPathname[i])) {
                     openedQuote = splittedPathname[i];
                 } else if (/\s+/.test(splittedPathname[i])) {
-                    throw new Error("\x1b[31mInvalid input\x1b[0m\n");
+                    throw new Error(MESSAGE_INVALID_INPUT);
                 }
             } else {
                 if (openedQuote === splittedPathname[i]) {
@@ -43,7 +43,7 @@ export const pathValidation = (pathname) => {
         const dir = params[FIRST_ELEMENT];
 
         if (dir === "" || params.length > 1) {
-            throw new Error("\x1b[31mInvalid input\x1b[0m\n");
+            throw new Error(MESSAGE_INVALID_INPUT);
         }
     }
 };
@@ -58,7 +58,7 @@ export const pathQuoteNormalize = (pathname) => {
                 openedQuote = splittedPathname[i];
                 splittedPathname[i] = "{quote}";
             } else if (/\s+/.test(splittedPathname[i])) {
-                stdout.write(`\x1b[31mInvalid input\x1b[0m\n`);
+                stdout.write(MESSAGE_INVALID_INPUT);
                 return;
             }
         } else {
@@ -74,6 +74,6 @@ export const pathQuoteNormalize = (pathname) => {
 
 export const filenameValidation = (filename) => {
     if (/[\\\/:*?"<>|]+/g.test(filename)) {
-        throw new Error("\x1b[31mOperation failed\x1b[0m\n");
+        throw new Error(MESSAGE_INVALID_INPUT);
     }
 };
