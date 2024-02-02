@@ -6,6 +6,7 @@ export const COMMAND_LS = "ls";
 export const COMMAND_CAT = "cat";
 export const COMMAND_ADD = "add";
 export const COMMAND_RM = "rm";
+export const COMMAND_HASH = "hash";
 export const FIRST_ELEMENT = 0;
 export const THIRD_ELEMENT = 2;
 export const ONE = 1;

@@ -6,6 +6,7 @@ import {
     COMMAND_CAT,
     COMMAND_CD,
     COMMAND_EXIT,
+    COMMAND_HASH,
     COMMAND_LS,
     COMMAND_RM,
     COMMAND_UP,
@@ -67,6 +68,9 @@ stdin.on("data", async (data) => {
         case COMMAND_RM:
             await command.rm(params);
             message.currentPath();
+            break;
+        case COMMAND_HASH:
+            await command.hash(params);
             break;
         case COMMAND_EXIT:
             command.exit();
