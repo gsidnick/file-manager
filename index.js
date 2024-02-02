@@ -7,6 +7,7 @@ import {
     COMMAND_CD,
     COMMAND_EXIT,
     COMMAND_LS,
+    COMMAND_RM,
     COMMAND_UP,
     EXIT_ERROR_CODE,
     EXIT_NORMAL_CODE,
@@ -61,6 +62,10 @@ stdin.on("data", async (data) => {
             break;
         case COMMAND_ADD:
             await command.add(params);
+            message.currentPath();
+            break;
+        case COMMAND_RM:
+            await command.rm(params);
             message.currentPath();
             break;
         case COMMAND_EXIT:
