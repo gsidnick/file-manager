@@ -1,5 +1,5 @@
 import { stdin } from "node:process";
-import { add, cat, cd, exit, getCommand, getParams, ls, up } from "./command.js";
+import command, { getCommand, getParams } from "./command.js";
 import {
     CLI_USERNAME,
     COMMAND_ADD,
@@ -40,34 +40,34 @@ process.on("SIGINT", () => {
 
 stdin.on("data", async (data) => {
     const line = data.toString().trim();
-    const command = getCommand(line);
+    const cmd = getCommand(line);
     const params = getParams(line);
 
-    switch (command) {
+    switch (cmd) {
         case COMMAND_UP:
-            await up(params);
+            await command.up(params);
             message.currentPath();
             break;
         case COMMAND_CD:
-            await cd(params);
+            await command.cd(params);
             message.currentPath();
             break;
         case COMMAND_LS:
-            await ls(params);
+            await command.ls(params);
             message.currentPath();
             break;
         case COMMAND_CAT:
-            await cat(params);
+            await command.cat(params);
             break;
         case COMMAND_ADD:
-            await add(params);
+            await command.add(params);
             message.currentPath();
             break;
         case COMMAND_EXIT:
-            exit();
+            command.exit();
             break;
         default:
-            if (command !== "") message.invalidInput();
+            if (cmd !== "") message.invalidInput();
             message.currentPath();
     }
 });
