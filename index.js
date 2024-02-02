@@ -8,6 +8,7 @@ import {
     COMMAND_EXIT,
     COMMAND_HASH,
     COMMAND_LS,
+    COMMAND_OS,
     COMMAND_RM,
     COMMAND_UP,
     EXIT_ERROR_CODE,
@@ -71,6 +72,10 @@ stdin.on("data", async (data) => {
             break;
         case COMMAND_HASH:
             await command.hash(params);
+            break;
+        case COMMAND_OS:
+            command.os(params);
+            message.currentPath();
             break;
         case COMMAND_EXIT:
             command.exit();

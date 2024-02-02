@@ -4,10 +4,11 @@ import { cd } from "./command/cd.js";
 import { exit } from "./command/exit.js";
 import { hash } from "./command/hash.js";
 import { ls } from "./command/ls.js";
+import { os } from "./command/os.js";
 import { rm } from "./command/rm.js";
 import { up } from "./command/up.js";
 
-export default { add, cat, cd, exit, hash, ls, rm, up };
+export default { add, cat, cd, exit, hash, ls, os, rm, up };
 
 export const getCommand = (data) => {
     return data.replace(/\s+/g, " ").split(" ")[0];
