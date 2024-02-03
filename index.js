@@ -9,6 +9,7 @@ import {
     COMMAND_EXIT,
     COMMAND_HASH,
     COMMAND_LS,
+    COMMAND_MV,
     COMMAND_OS,
     COMMAND_RM,
     COMMAND_RN,
@@ -78,6 +79,9 @@ stdin.on("data", async (data) => {
             break;
         case COMMAND_CP:
             await command.cp(params);
+            break;
+        case COMMAND_MV:
+            await command.mv(params);
             break;
         case COMMAND_HASH:
             await command.hash(params);
