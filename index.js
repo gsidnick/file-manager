@@ -5,6 +5,7 @@ import {
     COMMAND_ADD,
     COMMAND_CAT,
     COMMAND_CD,
+    COMMAND_CP,
     COMMAND_EXIT,
     COMMAND_HASH,
     COMMAND_LS,
@@ -74,6 +75,9 @@ stdin.on("data", async (data) => {
         case COMMAND_RM:
             await command.rm(params);
             message.currentPath();
+            break;
+        case COMMAND_CP:
+            await command.cp(params);
             break;
         case COMMAND_HASH:
             await command.hash(params);
