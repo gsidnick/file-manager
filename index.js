@@ -15,6 +15,7 @@ import {
     COMMAND_RM,
     COMMAND_RN,
     COMMAND_UP,
+    COMMAND_DECOMPRESS,
     EXIT_ERROR_CODE,
     EXIT_NORMAL_CODE,
     ONE,
@@ -89,6 +90,9 @@ stdin.on("data", async (data) => {
             break;
         case COMMAND_COMPRESS:
             await command.compress(params);
+            break;
+            case COMMAND_DECOMPRESS:
+            await command.decompress(params);
             break;
         case COMMAND_OS:
             command.os(params);
