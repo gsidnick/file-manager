@@ -1,4 +1,4 @@
-export const CLI_USERNAME = "--user-name";
+export const CLI_USERNAME = "--username";
 export const COMMAND_EXIT = ".exit";
 export const COMMAND_UP = "up";
 export const COMMAND_CD = "cd";
