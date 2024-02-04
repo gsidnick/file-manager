@@ -3,17 +3,26 @@ import path from "node:path";
 import { stdout } from "node:process";
 import { MESSAGE_INVALID_INPUT, MESSAGE_OPERATION_FAILED } from "../constants.js";
 import { global } from "../global.js";
-import { filenameValidation, isExist } from "../utils.js";
+import { filenameValidation, isExist, pathQuoteNormalize, pathValidation } from "../utils.js";
 
 export const add = async (data) => {
     try {
-        if (data === "") {
+        let filename = data;
+
+        if (filename === "") {
             throw new Error(MESSAGE_INVALID_INPUT);
         }
 
-        filenameValidation(data);
+        pathValidation(filename);
 
-        const filename = path.join(global.path, data);
+        if (/"|'/g.test(filename)) {
+            filename = pathQuoteNormalize(filename);
+        }
+
+        filenameValidation(filename);
+
+        filename = path.join(global.path, filename);
+
         const isFilenameExist = await isExist(filename);
 
         if (isFilenameExist) {
