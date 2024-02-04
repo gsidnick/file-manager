@@ -8,7 +8,6 @@ import {
     PARAM_EOL,
     PARAM_HOMEDIR,
     PARAM_USERNAME,
-    SECOND_ELEMENT,
 } from "../constants.js";
 
 const cpuInfo = () => {
@@ -16,8 +15,8 @@ const cpuInfo = () => {
     let summary = `Overall amount of CPUs is ${cpu.length}\n`;
     cpu.forEach((item) => {
         const model = item.model.split("@")[FIRST_ELEMENT].trim();
-        const speed = item.model.split("@")[SECOND_ELEMENT].trim();
-        summary += `Model: ${model} / Speed: ${speed}\n`;
+        const speed = (Math.round(item.speed / 10) / 100).toFixed(2);
+        summary += `Model: ${model} / Speed: ${speed}GHz\n`;
     });
     return summary.replace(/\n$/, "");
 };
