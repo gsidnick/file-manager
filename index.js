@@ -5,6 +5,7 @@ import {
     COMMAND_ADD,
     COMMAND_CAT,
     COMMAND_CD,
+    COMMAND_COMPRESS,
     COMMAND_CP,
     COMMAND_EXIT,
     COMMAND_HASH,
@@ -85,6 +86,9 @@ stdin.on("data", async (data) => {
             break;
         case COMMAND_HASH:
             await command.hash(params);
+            break;
+        case COMMAND_COMPRESS:
+            await command.compress(params);
             break;
         case COMMAND_OS:
             command.os(params);
